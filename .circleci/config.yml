@@ -1,0 +1,29 @@
+version: 2
+jobs:
+  checkout_code:
+    working_directory: ~/project
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - persist_to_workspace:
+         root: .
+         paths: /
+    build_docker_image:
+      working_directory: ~/project
+      docker: circleci/openjdk:8-jdk
+      steps:
+        - run:
+            name: Run Tests
+            command: |
+              docker login -u $DOCKER_USER -p $DOCKER_PASS
+              
+
+workflows:
+  version: 2
+  spring-boot-pipeline:
+    jobs:
+      - checkout_code
+      - install_dependencies:
+          requires:
+            - checkout_code
